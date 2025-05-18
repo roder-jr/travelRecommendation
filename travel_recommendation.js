@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!resultsContainer) {
         resultsContainer = document.createElement('div');
         resultsContainer.className = 'recommendation-results';
-        document.querySelector('main').appendChild(resultsContainer);
+        document.querySelector('.hero').insertAdjacentElement('afterend', resultsContainer);
     }
 
     // Fetch travel recommendations
