@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <script src="travel_recommendation.js"></script>
     <nav class="navbar">
         <div class="navbar-brand">TravelBloom</div>
         
@@ -26,7 +25,9 @@
             <button class="clear-btn">Clear</button>
         </div>
     </nav>
-        <!-- Nova seção Hero com imagem de fundo -->
+
+    <div class="main-content">
+        <!-- Seção Hero -->
         <section class="hero">
             <div class="hero-content">
                 <h1>EXPLORE DREAM DESTINATION</h1>
@@ -34,15 +35,21 @@
                 <button class="cta-button">BOOK NOW</button>
             </div>
         </section>
-        <footer class="social-footer">
-            <div class="social-icons">
-                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
-            </div>
-        </footer>
+        
+        <!-- Container para recomendações (será posicionado absolutamente) -->
+        <div class="recommendation-overlay"></div>
+    </div>
 
+    <footer class="social-footer">
+        <div class="social-icons">
+            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+        </div>
+    </footer>
+
+    <script src="travel_recommendation.js"></script>
 </body>
 </html>
