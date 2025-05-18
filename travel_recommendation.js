@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     city.name.toLowerCase().includes(searchTerm) || 
                     city.description.toLowerCase().includes(searchTerm)
                 );
+            );
             });
 
             results = results.concat(
