@@ -1,40 +1,30 @@
 // travel_recommendation.js
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Contact Form Handling
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                message: document.getElementById('message').value
-            };
-            
-            console.log('Form submitted:', formData);
-            alert('Thank you for your message! We will get back to you soon.');
-            event.target.reset();
-        });
-    }
-
-    // Travel Recommendations System
+    // Get DOM elements
     const searchBtn = document.querySelector('.search-btn');
     const clearBtn = document.querySelector('.clear-btn');
     const searchInput = document.querySelector('.search-container input');
-    const resultsContainer = document.createElement('div');
-    resultsContainer.className = 'recommendation-results';
-    document.querySelector('main').appendChild(resultsContainer);
+    
+    // Create results container if it doesn't exist in HTML
+    let resultsContainer = document.querySelector('.recommendation-results');
+    if (!resultsContainer) {
+        resultsContainer = document.createElement('div');
+        resultsContainer.className = 'recommendation-results';
+        document.querySelector('main').appendChild(resultsContainer);
+    }
 
-    // Fetch recommendations from JSON
+    // Fetch travel recommendations
     async function fetchRecommendations() {
         try {
             const response = await fetch('travel_recommendation_api.json');
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
             return await response.json();
         } catch (error) {
             console.error('Error fetching recommendations:', error);
+            alert('Failed to load travel recommendations. Please try again later.');
             return null;
         }
     }
@@ -51,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const recommendationsHTML = recommendations.map(item => `
             <div class="recommendation-card">
                 <div class="recommendation-image">
-                    <img src="${item.imageUrl}" alt="${item.name}" onerror="this.src='default-image.jpg'">
+                    <img src="${item.imageUrl}" alt="${item.name}">
                 </div>
                 <div class="recommendation-info">
                     <h3>${item.name}</h3>
@@ -62,16 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
         `).join('');
 
         resultsContainer.innerHTML = recommendationsHTML;
-        
-        // Add event listeners to visit buttons
-        document.querySelectorAll('.visit-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                alert(`You selected: ${this.parentNode.querySelector('h3').textContent}`);
-            });
-        });
     }
 
-    // Handle search functionality
+    // Handle search
     async function handleSearch() {
         const searchTerm = searchInput.value.trim().toLowerCase();
         
@@ -85,73 +68,74 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let results = [];
 
-        // Check for beach-related keywords
-        if (/beach|beaches|coast|shore/i.test(searchTerm)) {
+        // Search logic
+        if (searchTerm.includes('beach') || searchTerm.includes('beaches') || 
+            searchTerm.includes('coast') || searchTerm.includes('shore')) {
             results = data.beaches;
         } 
-        // Check for temple-related keywords
-        else if (/temple|temples|religious|worship/i.test(searchTerm)) {
+        else if (searchTerm.includes('temple') || searchTerm.includes('temples') || 
+                 searchTerm.includes('religious') || searchTerm.includes('worship')) {
             results = data.temples;
         } 
-        // Check for country-related keywords
-        else if (/country|countries|nation/i.test(searchTerm)) {
+        else if (searchTerm.includes('country') || searchTerm.includes('countries') || 
+                 searchTerm.includes('nation')) {
             data.countries.forEach(country => {
                 results = results.concat(country.cities);
             });
-        } 
-        // Check for specific countries
+        }
         else if (searchTerm.includes('australia')) {
             const australia = data.countries.find(c => c.name.toLowerCase() === 'australia');
             if (australia) results = australia.cities;
-        } 
+        }
         else if (searchTerm.includes('japan')) {
             const japan = data.countries.find(c => c.name.toLowerCase() === 'japan');
             if (japan) results = japan.cities;
-        } 
+        }
         else if (searchTerm.includes('brazil')) {
             const brazil = data.countries.find(c => c.name.toLowerCase() === 'brazil');
             if (brazil) results = brazil.cities;
-        } 
-        // Search across all categories
+        }
         else {
+            // Search across all categories
             data.countries.forEach(country => {
-                country.cities.forEach(city => {
-                    if (city.name.toLowerCase().includes(searchTerm) || 
-                        city.description.toLowerCase().includes(searchTerm)) {
-                        results.push(city);
-                    }
-                });
+                results = results.concat(country.cities.filter(city => 
+                    city.name.toLowerCase().includes(searchTerm) || 
+                    city.description.toLowerCase().includes(searchTerm)
+                );
             });
 
-            data.temples.forEach(temple => {
-                if (temple.name.toLowerCase().includes(searchTerm) || 
-                    temple.description.toLowerCase().includes(searchTerm)) {
-                    results.push(temple);
-                }
-            });
-
-            data.beaches.forEach(beach => {
-                if (beach.name.toLowerCase().includes(searchTerm) || 
-                    beach.description.toLowerCase().includes(searchTerm)) {
-                    results.push(beach);
-                }
-            });
+            results = results.concat(
+                data.temples.filter(temple => 
+                    temple.name.toLowerCase().includes(searchTerm) || 
+                    temple.description.toLowerCase().includes(searchTerm)
+                ),
+                data.beaches.filter(beach => 
+                    beach.name.toLowerCase().includes(searchTerm) || 
+                    beach.description.toLowerCase().includes(searchTerm)
+                )
+            );
         }
 
         displayRecommendations(results);
     }
 
-    // Clear search results
-    function clearSearchResults() {
+    // Clear results
+    function clearResults() {
         searchInput.value = '';
         resultsContainer.innerHTML = '';
-        searchInput.focus();
     }
 
     // Event listeners
-    if (searchBtn) searchBtn.addEventListener('click', handleSearch);
-    if (clearBtn) clearBtn.addEventListener('click', clearSearchResults);
-    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', handleSearch);
+    } else {
+        console.error('Search button not found');
+    }
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearResults);
+    }
+
     if (searchInput) {
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
